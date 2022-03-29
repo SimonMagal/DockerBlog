@@ -21,10 +21,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ArticleSerializer(serializers.ModelSerializer):
     """serialize a article"""
-    # Categories = serializers.PrimaryKeyRelatedField(
-    #     many=True,
-    #     queryset=Category.objects.all()
-    # )
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Tag.objects.all()
@@ -36,9 +32,13 @@ class ArticleSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
     author = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
 
     def get_author(self, obj):
         return obj.user.email
+
+    def get_category(self, obj):
+        return obj.category.name
 
 
 class ArticleDetailSerializer(ArticleSerializer):
