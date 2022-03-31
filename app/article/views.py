@@ -44,7 +44,7 @@ class CategoryViewSet(BaseArticleAttrViewSet):
 class ArticleViewSet(viewsets.ModelViewSet):
     """manage articles in the database"""
     serializer_class = serializers.ArticleSerializer
-    queryset = Article.objects.all()
+    queryset = Article.objects.order_by('title')
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
