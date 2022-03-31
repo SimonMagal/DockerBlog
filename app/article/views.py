@@ -4,6 +4,7 @@ from rest_framework import viewsets, mixins, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+
 from core.models import Tag, Category, Article, User
 from article import serializers
 
@@ -47,6 +48,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.order_by('title')
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    filter_fields = ('tags', 'category')
     lookup_field = 'slug'
 
     def _params_to_ints(self, qs):
