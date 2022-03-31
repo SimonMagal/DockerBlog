@@ -7,7 +7,7 @@ router = DefaultRouter()
 router.register('tags', views.TagViewSet)
 router.register('categories', views.CategoryViewSet)
 router.register('articles', views.ArticleViewSet)
-
+router.register('users', views.UserViewSet)
 app_name = 'article'
 
 urlpatterns = [

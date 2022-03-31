@@ -84,6 +84,7 @@ class Article(models.Model):
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     tags = models.ManyToManyField('Tag')
     image = models.ImageField(null=True, upload_to=article_image_file_path, blank=True)
+    content = models.TextField()
 
     def __str__(self):
         return self.title

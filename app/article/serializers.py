@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from core.models import Tag, Category, Article
+from core.models import Tag, Category, Article, User
+
 
 class TagSerializer(serializers.ModelSerializer):
     """serializer for tag objects"""
@@ -21,30 +22,24 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ArticleSerializer(serializers.ModelSerializer):
     """serialize a article"""
+    category = serializers.PrimaryKeyRelatedField(
+        many=False,
+        queryset=Category.objects.all()
+    )
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
-        queryset=Tag.objects.all()
+        queryset=Tag.objects.all(),
     )
 
     class Meta:
         model = Article
-        fields = ('id', 'title', 'category', 'tags', 'author')
+        fields = ('id', 'title', 'content', 'category', 'tags', 'author', 'image')
         read_only_fields = ('id',)
 
     author = serializers.SerializerMethodField()
-    category = serializers.SerializerMethodField()
 
     def get_author(self, obj):
         return obj.user.email
-
-    def get_category(self, obj):
-        return obj.category.name
-
-
-class ArticleDetailSerializer(ArticleSerializer):
-    """Serialize a article detail"""
-    Categories = CategorySerializer(many=True, read_only=True)
-    tags = TagSerializer(many=True, read_only=True)
 
 
 class ArticleImageSerializers(serializers.ModelSerializer):
@@ -53,4 +48,20 @@ class ArticleImageSerializers(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = ('id', 'image')
+        read_only_fields = ('id',)
+
+
+class ArticleDetailSerializer(ArticleSerializer):
+    """Serialize a article detail"""
+    category = CategorySerializer(read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+    image = ArticleImageSerializers(read_only=True)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """serialize a user data to a list"""
+
+    class Meta:
+        model = User
+        fields = ('id', 'name', 'email')
         read_only_fields = ('id',)
