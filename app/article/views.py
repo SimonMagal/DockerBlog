@@ -47,10 +47,19 @@ class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.order_by('title')
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    lookup_field = 'slug'
 
     def _params_to_ints(self, qs):
         """converts ID to int"""
         return [int(str_id) for str_id in qs.split(',')]
+
+    def _params_to_str(self, qs):
+        """converts slug to str"""
+        return [str_slug for str_slug in qs.split(',')]
+
+    def retrive(self, request, *args, **kwargs):
+        self.serializer_class = serializers.ArticleDetailSerializer
+        return super().retrieve(request, *args, **kwargs)
 
     def get_queryset(self):
         """retrieve the articles for the authenticated user"""
@@ -59,25 +68,24 @@ class ArticleViewSet(viewsets.ModelViewSet):
         author = self.request.query_params.get('author')
         queryset = self.queryset
         if tags:
-            tags_ids = self._params_to_ints(tags)
-            queryset = queryset.filter(tags__id__in=tags_ids)
+            tags_slug = self._params_to_str(tags)
+            queryset = queryset.filter(tags__slug__in=tags_slug)
         if category:
-            category_ids = self._params_to_ints(category)
-            queryset = queryset.filter(category__id__in=category_ids)
+            category_slug = self._params_to_str(category)
+            queryset = queryset.filter(category__slug__in=category_slug)
         if author:
             author_id = self._params_to_ints(author)
             queryset = queryset.filter(user__id__in=author_id)
-        # return self.queryset.filter(user=self.request.user)
         return queryset.all()
 
-    def get_serializer_class(self):
-        """return appropiate serializer class"""
-        if self.action == 'retrieve':
-            return serializers.ArticleDetailSerializer
-        elif self.action == 'upload_image':
-            return serializers.ArticleImageSerializers
-
-        return self.serializer_class
+    # def get_serializer_class(self):
+    #     """return appropiate serializer class"""
+    #     if self.action == 'retrieve':
+    #         return serializers.ArticleDetailSerializer
+    #     elif self.action == 'upload_image':
+    #         return serializers.ArticleImageSerializers
+    #
+    #     return self.serializer_class
 
     def perform_create(self, serializer):
         """create a new article"""

@@ -1,5 +1,8 @@
 import uuid
 import os
+
+from django.template.defaultfilters import slugify
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
@@ -83,8 +86,17 @@ class Article(models.Model):
     link = models.CharField(max_length=255, blank=True)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     tags = models.ManyToManyField('Tag')
+    slug = models.SlugField(null=False, unique=True)
     image = models.ImageField(null=True, upload_to=article_image_file_path, blank=True)
     content = models.TextField()
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('article_detail', kwargs={"slug": self.slug})
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        return super().save(*args, **kwargs)

@@ -11,5 +11,6 @@ router.register('users', views.UserViewSet)
 app_name = 'article'
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path("<slug:slug>", views.ArticleViewSet)
 ]

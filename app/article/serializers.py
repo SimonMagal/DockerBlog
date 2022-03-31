@@ -33,7 +33,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ('id', 'title', 'content', 'category', 'tags', 'author', 'image')
+        fields = ('id', 'title', 'content', 'category', 'tags', 'author', 'slug', 'image')
         read_only_fields = ('id',)
 
     author = serializers.SerializerMethodField()
@@ -56,6 +56,10 @@ class ArticleDetailSerializer(ArticleSerializer):
     category = CategorySerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     image = ArticleImageSerializers(read_only=True)
+    lookup_field = 'slug'
+    extra_kwargs = {
+        'url': {'lookup_field': 'slug'}
+    }
 
 
 class UserSerializer(serializers.ModelSerializer):
