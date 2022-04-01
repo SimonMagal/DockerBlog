@@ -60,21 +60,22 @@ class ArticleViewSet(viewsets.ModelViewSet):
         return [str_slug for str_slug in qs.split(',')]
 
     def retrive(self, request, *args, **kwargs):
+        """calls the retrieve action"""
         self.serializer_class = serializers.ArticleDetailSerializer
         return super().retrieve(request, *args, **kwargs)
 
     def get_queryset(self):
         """retrieve the articles for the authenticated user"""
-        tags = self.request.query_params.get('tags')
-        category = self.request.query_params.get('category')
+        # tags = self.request.query_params.get('tags')
+        # category = self.request.query_params.get('category')
         author = self.request.query_params.get('author')
         queryset = self.queryset
-        if tags:
-            tags_slug = self._params_to_str(tags)
-            queryset = queryset.filter(tags__slug__in=tags_slug)
-        if category:
-            category_slug = self._params_to_str(category)
-            queryset = queryset.filter(category__slug__in=category_slug)
+        # if tags:
+        #     tags_slug = self._params_to_str(tags)
+        #     queryset = queryset.filter(tags__slug__in=tags_slug)
+        # if category:
+        #     category_slug = self._params_to_str(category)
+        #     queryset = queryset.filter(category__slug__in=category_slug)
         if author:
             author_id = self._params_to_ints(author)
             queryset = queryset.filter(user__id__in=author_id)
