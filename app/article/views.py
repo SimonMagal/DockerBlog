@@ -48,7 +48,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.order_by('title')
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-    filter_fields = ('tags', 'category')
+    filter_fields = ('tags__slug', 'category__slug')
     lookup_field = 'slug'
 
     def _params_to_ints(self, qs):
